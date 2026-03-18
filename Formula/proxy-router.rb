@@ -10,6 +10,18 @@ class ProxyRouter < Formula
 
   def install
     bin.install "proxy-router-v#{version}-darwin-arm64" => "proxy-router"
+    # Install shell completions in Homebrew's global completions directories
+    bash_output = Utils.safe_popen_read(bin/"proxy-router", "completion", "bash")
+    (buildpath/"proxy-router.bash").write bash_output
+    bash_completion.install "proxy-router.bash" => "proxy-router"
+
+    zsh_output = Utils.safe_popen_read(bin/"proxy-router", "completion", "zsh")
+    (buildpath/"_proxy-router").write zsh_output
+    zsh_completion.install "_proxy-router"
+
+    fish_output = Utils.safe_popen_read(bin/"proxy-router", "completion", "fish")
+    (buildpath/"proxy-router.fish").write fish_output
+    fish_completion.install "proxy-router.fish"
   end
 
   service do
@@ -30,15 +42,25 @@ class ProxyRouter < Formula
 
   def caveats
     <<~EOS
-      Run the following to install shell completions and finish setup:
-        proxy-router install
+      Shell completions for bash, zsh, and fish are installed automatically.
 
       To start proxy-router as a service:
         brew services start proxy-router
 
       Config file: #{etc}/proxy-router/config.json
       Logs:        #{var}/log/proxy-router.{log,err}
+
+      When you run:
+        brew uninstall --zap proxy-router
+      Homebrew will prompt to remove all configuration and log files for proxy-router.
     EOS
+  end
+
+  zap do
+    delete etc/"proxy-router"
+    delete var/"log/proxy-router.log"
+    delete var/"log/proxy-router.err"
+  end
   end
 
   test do
