@@ -56,12 +56,6 @@ class ProxyRouter < Formula
     EOS
   end
 
-  zap do
-    delete etc/"proxy-router"
-    delete var/"log/proxy-router.log"
-    delete var/"log/proxy-router.err"
-  end
-
   test do
     system bin/"proxy-router", "version"
   end
