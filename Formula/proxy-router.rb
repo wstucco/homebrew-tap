@@ -61,7 +61,6 @@ class ProxyRouter < Formula
     delete var/"log/proxy-router.log"
     delete var/"log/proxy-router.err"
   end
-  end
 
   test do
     system bin/"proxy-router", "version"
