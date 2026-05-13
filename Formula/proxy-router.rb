@@ -5,7 +5,7 @@ class ProxyRouter < Formula
 
   on_arm do
     url "https://github.com/wstucco/proxy-router/releases/download/v#{version}/proxy-router-v#{version}-darwin-arm64.tar.gz"
-    sha256 "e0be320da8d4222a9cfaa80fa22bbb906c4c6679a58d810bbefeb204c8cbbd6c" # updated by CI
+    sha256 "6da19b629b9f7f000832b96d10ac541315487380d1d5c4a31ee1a7172962393b" # updated by CI
   end
 
   def install
