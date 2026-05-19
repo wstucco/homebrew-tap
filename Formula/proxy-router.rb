@@ -1,11 +1,11 @@
 class ProxyRouter < Formula
   desc "Local proxy that routes connections to an upstream or direct based on configurable rules"
   homepage "https://github.com/wstucco/proxy-router"
-  version "0.3.0" # updated by CI
+  version "0.3.1" # updated by CI
 
   on_arm do
     url "https://github.com/wstucco/proxy-router/releases/download/v#{version}/proxy-router-v#{version}-darwin-arm64.tar.gz"
-    sha256 "6da19b629b9f7f000832b96d10ac541315487380d1d5c4a31ee1a7172962393b" # updated by CI
+    sha256 "2d1cc3f2007ad374418c7324e249b5c6786e4a7ba9366671eddc8415bc09cc4f" # updated by CI
   end
 
   def install
@@ -18,7 +18,7 @@ class ProxyRouter < Formula
   end
 
   service do
-    run [opt_bin/"proxy-router", "run", "-config", etc/"proxy-router/config.json"]
+    run [opt_bin/"proxy-router", "run", "-config", etc/"proxy-router/config.toml"]
     keep_alive true
     log_path var/"log/proxy-router.log"
     error_log_path var/"log/proxy-router.err"
@@ -26,9 +26,17 @@ class ProxyRouter < Formula
 
   def post_install
     (etc/"proxy-router").mkpath
-    unless (etc/"proxy-router/config.json").exist?
-      (etc/"proxy-router/config.json").write Utils.safe_popen_read(bin/"proxy-router", "run", "-gen-config")
+
+    # Migrate from legacy config.json if present
+    system bin/"proxy-router", "migrate"
+
+    # Generate default config.toml if neither .toml nor legacy .json exist
+    unless (etc/"proxy-router/config.toml").exist?
+      (etc/"proxy-router/config.toml").write Utils.safe_popen_read(bin/"proxy-router", "run", "-gen-config")
     end
+
+    # Generate CA certificate for TLS MITM (idempotent)
+    system bin/"proxy-router", "install-certs"
   end
 
   def caveats
@@ -36,7 +44,7 @@ class ProxyRouter < Formula
       To start proxy-router as a service:
         brew services start proxy-router
 
-      Config file: #{etc}/proxy-router/config.json
+      Config file: #{etc}/proxy-router/config.toml
       Logs:        #{var}/log/proxy-router.{log,err}
     EOS
   end
