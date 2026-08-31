@@ -1,11 +1,11 @@
 class ProxyRouter < Formula
   desc "Local proxy that routes connections to an upstream or direct based on configurable rules"
   homepage "https://github.com/wstucco/proxy-router"
-  version "0.8.1" # updated by CI
+  version "0.8.2" # updated by CI
 
   on_arm do
     url "https://github.com/wstucco/proxy-router/releases/download/v#{version}/proxy-router-v#{version}-darwin-arm64.tar.gz"
-    sha256 "8164e3efc08c8a640f2d768e670d602cc6e10f00eddf0d6fdab25d610b27cd67" # updated by CI
+    sha256 "174fa461fb1384bd2b81c2efeee87a122044a3a2827fe6aebaf8b835444d6b2e" # updated by CI
   end
 
   def install
